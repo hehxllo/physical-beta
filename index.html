@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body style="height: 100%;margin: 0;">
+<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+<div id="main" style="height: 100%;"></div>
+<script src="js/echarts.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+<
+<script type="text/javascript">
+    var dom = document.getElementById("main");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    var data = [
+        [40,0.0150],
+        [45,0.0280],
+        [50,0.0420],
+        [55,0.0610],
+        [60,0.0940],
+        [65,0.1330],
+        [70,0.1930],
+        [75,0.2930]
+    ];
+
+    // See https://github.com/ecomfe/echarts-stat
+    var myRegression = ecStat.regression('linear', data);
+
+    myRegression.points.sort(function(a, b) {
+        return a[0] - b[0];
+    });
+
+    option = {
+        title: {
+            text: '温度-L铜坐标图',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross'
+            }
+        },
+        xAxis: {
+            type: 'value',
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            },
+        },
+        yAxis: {
+            type: 'value',
+            min: 0.001,
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            },
+        },
+        series: [{
+            name: '△铜',
+            type: 'scatter',
+            label: {
+                emphasis: {
+                    show: true,
+                    position: 'left',
+                    textStyle: {
+                        color: 'blue',
+                        fontSize: 16
+                    }
+                }
+            },
+            data: data
+        }, {
+            name: 'line',
+            type: 'line',
+            showSymbol: false,
+            data: myRegression.points,
+            markPoint: {
+                itemStyle: {
+                    normal: {
+                        color: 'transparent'
+                    }
+                },
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'left',
+                        formatter: myRegression.expression,
+                        textStyle: {
+                            color: '#333',
+                            fontSize: 14
+                        }
+                    }
+                },
+                data: [{
+                    coord: myRegression.points[myRegression.points.length - 1]
+                }]
+            }
+        }]
+    };;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+</script>
+</body>
+</html>
